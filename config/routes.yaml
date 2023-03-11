@@ -1,3 +1,14 @@
-#index:
-#    path: /
-#    controller: App\Controller\DefaultController::index
+index:
+    path: /
+    controller: App\Controller\ProjectController::list
+
+project_by_id:
+    path: /project/{key}-{id}
+    controller: App\Controller\ProjectController::showById
+
+    requirements:
+        id: '\d+'
+        key: '\S+'
+
+    methods: GET
+    condition: "request.headers.get('User-Agent') matches '/firefox/i'"
