@@ -1,0 +1,8 @@
+<ul>
+    {% for project in projects %}
+    <li><a href="{{ path('project_by_id', {id: project.id, key: project.key } ) }}">
+        {{ project.name }}
+        </a>
+    </li>     
+    {% endfor %}
+</ul>
