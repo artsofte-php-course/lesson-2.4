@@ -2,6 +2,10 @@ index:
     path: /
     controller: App\Controller\ProjectController::list
 
+project_add:
+    path: /projects/add
+    controller: App\Controller\ProjectController::add
+
 project_by_id:
     path: /project/{key}-{id}
     controller: App\Controller\ProjectController::showById

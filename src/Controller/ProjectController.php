@@ -3,27 +3,36 @@
 namespace App\Controller;
 
 use App\Entity\Project;
+use Doctrine\Persistence\ManagerRegistry;
+
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ProjectController extends AbstractController {
 
-    protected $projects = [];
 
-    public function __construct()
+    public function list(ManagerRegistry $doctrine) : Response
     {
-        $this->projects[1] = new Project(1, "First project", "FP"); 
-        $this->projects[2] = new Project(2, "Second project", "SP");    
-        $this->projects[3] = new Project(3, "Third project", "TP");    
+
+        $projects = $doctrine->getRepository(Project::class)
+                                ->findAll();
+
+        return $this->render('list.html.twig', [
+            'projects' => $projects
+        ]);
     }
 
-
-    public function list() : Response
+    public function add(ManagerRegistry $doctrine) : Response 
     {
-        return $this->render('list.html.twig', [
-            'projects' => $this->projects
-        ]);
+        $projectNum = rand(1,100);
+        $project = new Project(sprintf('Project #%d', $projectNum), 
+                                sprintf('PRJ-%d', $projectNum));   
+
+        $doctrine->getManager()->persist($project);
+        $doctrine->getManager()->flush();
+
+        return new Response();
     }
 
     public function showById(int $id, string $key) : Response

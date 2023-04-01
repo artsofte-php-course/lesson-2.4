@@ -1,20 +1,33 @@
 <?php 
 namespace App\Entity;
+use Doctrine\ORM\Mapping as ORM;
 
+/**
+ * @ORM\Entity
+ */
 class Project {
 
-
+    /**
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
+     */
     protected $id;
 
+    /**
+     * @ORM\Column(type="string", nullable=false, length=255)
+     */
     protected $name;
 
-    protected $key;
+    /**
+     * @ORM\Column(type="string", nullable=false, length=10)
+     */
+    protected $slug;
     
-    public function __construct($id, $name, $key)
+    public function __construct($name, $key)
     {
-        $this->id = $id;
         $this->name = $name;
-        $this->key = $key;
+        $this->slug = $key;
     }
 
     public function getId()
@@ -27,9 +40,9 @@ class Project {
         return $this->name;
     }
 
-    public function getKey()
+    public function getSlug()
     {
-        return $this->key;
+        return $this->slug;
     }
 
 
