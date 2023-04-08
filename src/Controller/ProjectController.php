@@ -3,9 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Project;
+use App\Type\ProjectType;
 use Doctrine\Persistence\ManagerRegistry;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -23,22 +25,74 @@ class ProjectController extends AbstractController {
         ]);
     }
 
-    public function add(ManagerRegistry $doctrine) : Response 
+    public function add(ManagerRegistry $doctrine, Request  $request) : Response 
     {
         $projectNum = rand(1,100);
-        $project = new Project(sprintf('Project #%d', $projectNum), 
-                                sprintf('PRJ-%d', $projectNum));   
+        $projectName = sprintf('Project #%d', $projectNum);
+        $projectSlug = sprintf('PRJ-%d', $projectNum);
+        $project = new Project($projectName, $projectSlug);   
 
-        $doctrine->getManager()->persist($project);
-        $doctrine->getManager()->flush();
 
-        return new Response();
+        $form = $this->createForm(ProjectType::class, $project);
+        
+        $form->handleRequest($request);    
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $project = $form->getData();
+
+            $doctrine->getManager()->persist($project);
+            $doctrine->getManager()->flush();
+
+            return $this->redirectToRoute('index');
+
+        }
+
+
+        return $this->render('projects/create.html.twig', [
+            'form' => $form->createView()
+        ]);
     }
 
-    public function showById(int $id, string $key) : Response
+    public function update(ManagerRegistry $doctrine, Request $request, $id)
+    {
+        $project = $doctrine->getRepository(Project::class)->find($id);
+        
+        if ($project === null) {
+            return $this->createNotFoundException(
+                sprintf("Project with id %d not found", $id)
+            );
+        }
+
+        $form = $this->createForm(ProjectType::class, $project);
+        
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $project = $form->getData();
+
+            $doctrine->getManager()->persist($project);
+            $doctrine->getManager()->flush();
+
+            return $this->redirectToRoute('index');
+        }
+
+        return $this->render('projects/edit.html.twig', [
+            'form' => $form->createView()
+        ]);
+
+        
+    }
+
+    public function showById(ManagerRegistry $doctrine, int $id, string $key) : Response
     {   
-        if (!isset($this->projects[$id]) || 
-        $this->projects[$id]->getKey() !== $key ) {
+
+        /** Project $project */
+        $project = $doctrine->getRepository(Project::class)
+            ->find($id);
+
+        if ($project === null || $project->getSlug() !== $key) {
             
             return $this->redirect(
                 $this->generateUrl('index')
@@ -48,7 +102,7 @@ class ProjectController extends AbstractController {
 
         return $this->render('show.html.twig', [
             'id' => $id,
-            'project' => $this->projects[$id]
+            'project' => $project
         ]);
     }
 

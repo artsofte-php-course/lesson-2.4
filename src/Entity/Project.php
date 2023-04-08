@@ -46,5 +46,16 @@ class Project {
     }
 
 
+    public function setName($name) 
+    {
+        $this->name = $name;
+    }
+
+
+    public function setSlug($slug) 
+    {
+        $this->slug = $slug;
+    }
+
 
 }

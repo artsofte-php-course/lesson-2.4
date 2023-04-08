@@ -6,6 +6,12 @@ project_add:
     path: /projects/add
     controller: App\Controller\ProjectController::add
 
+project_edit:
+    path: /project/{id}/update
+    controller: App\Controller\ProjectController::update
+    requirements:
+        id: '\d+'
+        
 project_by_id:
     path: /project/{key}-{id}
     controller: App\Controller\ProjectController::showById
