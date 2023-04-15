@@ -64,12 +64,14 @@ class ProjectController extends AbstractController {
             );
         }
 
-        $form = $this->createForm(ProjectType::class, $project);
+        $form = $this->createForm(ProjectType::class, $project, [
+            'isNew' => false, 
+            'slug' => $project->getSlug()
+        ]);
         
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             $project = $form->getData();
 
             $doctrine->getManager()->persist($project);

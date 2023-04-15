@@ -21,4 +21,11 @@ project_by_id:
         key: '\S+'
 
     methods: GET
-    condition: "request.headers.get('User-Agent') matches '/firefox/i'"
+
+task_add_to_project:
+    path: /project/{key}-{id}/create-task
+    controller: App\Controller\TaskController::create
+    
+    requirements:
+        id: '\d+'
+        key: '\S+'

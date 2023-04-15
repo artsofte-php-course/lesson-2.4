@@ -6,6 +6,19 @@ This is project #{{ id }}  page.
 
 Project name is {{ project.name }}
 
+<br />
+
+
+
 <a href={{ path('project_edit', {id: project.id}) }}> Edit </a>
+<br />
+<a href={{ path('task_add_to_project', {id: project.id, key: project.slug}) }}> Add task </a>
+
+<br />
+
+{% for task in project.tasks  %}
+    {{ task.name }} <br/>
+{% endfor %}
+
 
 {% endblock %}

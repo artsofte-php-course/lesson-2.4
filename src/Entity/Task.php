@@ -32,6 +32,11 @@ class Task
      */
     private $dueDate;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Project::class, inversedBy="tasks")
+     */
+    private $project;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -70,6 +75,12 @@ class Task
     {
         $this->dueDate = $dueDate;
 
+        return $this;
+    }
+
+    public function setProject(Project $project) 
+    {
+        $this->project = $project;
         return $this;
     }
 }
